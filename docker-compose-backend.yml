@@ -13,7 +13,7 @@ services:
   squidex_squidex:
     image: "squidex/squidex:latest"
     ports:
-      - "80:80"
+      - "8000:80"
     environment:
       - URLS__BASEURL=${SQUIDEX_PROTOCOL}://${SQUIDEX_DOMAIN}/
       - URLS__ENFORCEHTTPS=${SQUIDEX_FORCE_HTTPS}
