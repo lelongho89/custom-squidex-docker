@@ -1,78 +1,26 @@
 version: '3'
 services:
   proxy:
-    image: "lee17/nginx:dev"
+    build: ./nginx
     ports:
       - "80:80"
     depends_on:
-      - frontend
+      - app
     networks:
       - internal
-    restart: unless-stopped
+    restart: always
     
-  frontend:
-    image: "lee17/8amstudio:dev"
+  app:
+    image: "myapp"
     expose:
       - "5000"
     networks:
       - internal
-    restart: unless-stopped
+    restart: always
     environment:
-      - URLS__BASEURL=${SQUIDEX_PROTOCOL}://${SQUIDEX_DOMAIN}/
-      - URLS__ENFORCEHTTPS=${SQUIDEX_FORCE_HTTPS}
-      - EVENTSTORE__CONSUME=true
-      - EVENTSTORE__MONGODB__CONFIGURATION=mongodb://squidex_mongo
-      - STORE__MONGODB__CONFIGURATION=mongodb://squidex_mongo
-      - IDENTITY__ADMINEMAIL=${SQUIDEX_ADMINEMAIL}
-      - IDENTITY__ADMINPASSWORD=${SQUIDEX_ADMINPASSWORD}
-      - IDENTITY__GOOGLECLIENT=${SQUIDEX_GOOGLECLIENT}
-      - IDENTITY__GOOGLESECRET=${SQUIDEX_GOOGLESECRET}- IDENTITY__GITHUBCLIENT=${SQUIDEX_GITHUBCLIENT}
-      - IDENTITY__GITHUBSECRET=${SQUIDEX_GITHUBSECRET}
-      - IDENTITY__MICROSOFTCLIENT=${SQUIDEX_MICROSOFTCLIENT}
-      - IDENTITY__MICROSOFTSECRET=${SQUIDEX_MICROSOFTSECRET}
-      - LETSENCRYPT_HOST=${SQUIDEX_DOMAIN}
-      - LETSENCRYPT_EMAIL=${SQUIDEX_ADMINEMAIL}
-      - APP__URL=${SQUIDEX_PROTOCOL}://${SQUIDEX_DOMAIN}/
       - APP__APPNAME=${APP_APPNAME}
       - APP__CLIENTID=${APP_CLIENTID}
       - APP__CLIENTSECRET=${APP_CLIENTSECRET}
-   
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    volumes:
-      - /data/db:/data/db
-    networks:
-      - internal
-    restart: unless-stopped
-    
-  backend:
-    image: "squidex/squidex:latest"
-    expose:
-      - "11111"
-    environment:
-      - URLS__BASEURL=${SQUIDEX_PROTOCOL}://${SQUIDEX_DOMAIN}/
-      - URLS__ENFORCEHTTPS=${SQUIDEX_FORCE_HTTPS}
-      - EVENTSTORE__CONSUME=true
-      - EVENTSTORE__MONGODB__CONFIGURATION=mongodb://squidex_mongo
-      - STORE__MONGODB__CONFIGURATION=mongodb://squidex_mongo
-      - IDENTITY__ADMINEMAIL=${SQUIDEX_ADMINEMAIL}
-      - IDENTITY__ADMINPASSWORD=${SQUIDEX_ADMINPASSWORD}
-      - IDENTITY__GOOGLECLIENT=${SQUIDEX_GOOGLECLIENT}
-      - IDENTITY__GOOGLESECRET=${SQUIDEX_GOOGLESECRET}- IDENTITY__GITHUBCLIENT=${SQUIDEX_GITHUBCLIENT}
-      - IDENTITY__GITHUBSECRET=${SQUIDEX_GITHUBSECRET}
-      - IDENTITY__MICROSOFTCLIENT=${SQUIDEX_MICROSOFTCLIENT}
-      - IDENTITY__MICROSOFTSECRET=${SQUIDEX_MICROSOFTSECRET}
-      - LETSENCRYPT_HOST=${SQUIDEX_DOMAIN}
-      - LETSENCRYPT_EMAIL=${SQUIDEX_ADMINEMAIL}
-    depends_on:
-      - mongo
-    volumes:
-      - /data/assets:/app/Assets
-    networks:
-      - internal
-    restart: unless-stopped
     
 networks:
   internal:
